@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CART - Browse Items</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script type="module" src="firebaseauth.js"></script>
+    <script type="module" src="app.js" defer></script>
+    <style>
+      .hero-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+      .product-card {
+        transition: all 0.3s ease;
+      }
+      .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+      .nav-link {
+        position: relative;
+      }
+      .nav-link:after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -2px;
+        left: 0;
+        background-color: #ef4444;
+        transition: width 0.3s ease;
+      }
+      .nav-link:hover:after {
+        width: 100%;
+      }
+      .category-pill.active {
+        background-color: #764ba2;
+        color: white;
+      }
+    </style>
+  </head>
+  <body class="font-sans antialiased">
+    <!-- Navbar -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+      <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+          <div class="w-10 h-10 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center">
+            <i class="fas fa-shopping-cart text-white"></i>
+          </div>
+          <span class="text-xl font-bold text-gray-800">CART</span>
+        </div>
+        
+        <nav class="hidden md:flex space-x-8">
+          <a href="home.html" class="nav-link text-gray-600 hover:text-gray-900 font-medium">Home</a>
+          <a href="items.html" class="nav-link text-gray-600 hover:text-gray-900 font-medium">Products</a>
+          <a href="cart.html" class="nav-link text-gray-600 hover:text-gray-900 font-medium">Cart</a>
+          <a href="aboutus.html" class="nav-link text-gray-600 hover:text-gray-900 font-medium">About</a>
+          <a href="contactus.html" class="nav-link text-gray-600 hover:text-gray-900 font-medium">Contact</a>
+        </nav>
+        
+        <div class="flex items-center space-x-4">
+          <a href="cart.html" class="relative">
+            <i class="fas fa-shopping-cart text-gray-600 text-xl"></i>
+            <span id="cart-count" class="cart-count absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">0</span>
+          </a>
+          <button onclick="logout()" class="bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-2 rounded-full font-medium hover:shadow-lg transition-all duration-300">
+            Logout <i class="fas fa-sign-out-alt ml-1"></i>
+          </button>
+        </div>
+        
+        <!-- Mobile menu button -->
+        <button class="md:hidden text-gray-600">
+          <i class="fas fa-bars text-xl"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Category Header -->
+    <section class="hero-gradient text-white py-12">
+      <div class="container mx-auto px-4 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6">Browse Products</h1>
+        <p class="text-xl mb-8 max-w-2xl mx-auto">
+          Find your favorite items at great prices
+        </p>
+        
+        <!-- Category Filter Pills -->
+        <div class="flex flex-wrap justify-center gap-2 mb-8">
+          <button class="category-pill active bg-white text-purple-700 px-4 py-2 rounded-full font-medium hover:bg-opacity-90 transition" data-category="all">
+            All Items
+          </button>
+          <button class="category-pill bg-white bg-opacity-80 text-purple-700 px-4 py-2 rounded-full font-medium hover:bg-opacity-90 transition" data-category="fruits">
+            Fruits
+          </button>
+          <button class="category-pill bg-white bg-opacity-80 text-purple-700 px-4 py-2 rounded-full font-medium hover:bg-opacity-90 transition" data-category="vegetables">
+            Vegetables
+          </button>
+          <button class="category-pill bg-white bg-opacity-80 text-purple-700 px-4 py-2 rounded-full font-medium hover:bg-opacity-90 transition" data-category="bakery">
+            Bakery
+          </button>
+          <button class="category-pill bg-white bg-opacity-80 text-purple-700 px-4 py-2 rounded-full font-medium hover:bg-opacity-90 transition" data-category="dairy">
+            Dairy
+          </button>
+          <button class="category-pill bg-white bg-opacity-80 text-purple-700 px-4 py-2 rounded-full font-medium hover:bg-opacity-90 transition" data-category="beverages">
+            Beverages
+          </button>
+          <button class="category-pill bg-white bg-opacity-80 text-purple-700 px-4 py-2 rounded-full font-medium hover:bg-opacity-90 transition" data-category="spices">
+            Spices
+          </button>
+        </div>
+        
+        <!-- Search Box -->
+        <div class="max-w-md mx-auto relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="fas fa-search text-gray-400"></i>
+          </div>
+          <input type="text" id="search-input" class="w-full pl-10 pr-4 py-3 rounded-full border-0 focus:ring-2 focus:ring-purple-500 text-gray-800" placeholder="Search products...">
+        </div>
+      </div>
+    </section>
+
+    <!-- Products Grid -->
+    <section class="py-12 bg-gray-50">
+      <div class="container mx-auto px-4">
+        <!-- Products Grid -->
+        <div id="products-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <!-- Products will be loaded dynamically -->
+        </div>
+        
+        <!-- Empty State -->
+        <div id="empty-state" class="hidden text-center py-12">
+          <div class="mx-auto w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mb-4">
+            <i class="fas fa-search text-gray-400 text-3xl"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-700 mb-2">No Products Found</h3>
+          <p class="text-gray-500">Try changing your search or filter criteria</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Add to Cart Toast -->
+    <div id="cart-toast" class="fixed bottom-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 flex items-center">
+      <i class="fas fa-check-circle mr-2"></i>
+      <span>Item added to cart!</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-12">
+      <div class="container mx-auto px-4">
+        <div class="grid md:grid-cols-4 gap-8">
+          <div>
+            <div class="flex items-center space-x-2 mb-4">
+              <div class="w-10 h-10 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center">
+                <i class="fas fa-shopping-cart text-white"></i>
+              </div>
+              <span class="text-xl font-bold text-white">CART</span>
+            </div>
+            <p class="mb-4">
+              Your one-stop shop for all grocery needs.
+            </p>
+            <div class="flex space-x-4">
+              <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
+              <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+          
+          <div>
+            <h3 class="text-white font-semibold text-lg mb-4">Quick Links</h3>
+            <ul class="space-y-2">
+              <li><a href="home.html" class="hover:text-white transition">Home</a></li>
+              <li><a href="items.html" class="hover:text-white transition">Products</a></li>
+              <li><a href="cart.html" class="hover:text-white transition">Your Cart</a></li>
+              <li><a href="aboutus.html" class="hover:text-white transition">About Us</a></li>
+              <li><a href="contactus.html" class="hover:text-white transition">Contact</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 class="text-white font-semibold text-lg mb-4">Help & Info</h3>
+            <ul class="space-y-2">
+              <li><a href="#" class="hover:text-white transition">FAQs</a></li>
+              <li><a href="#" class="hover:text-white transition">Shipping Info</a></li>
+              <li><a href="#" class="hover:text-white transition">Returns Policy</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 class="text-white font-semibold text-lg mb-4">Contact Us</h3>
+            <p class="mb-2"><i class="fas fa-map-marker-alt mr-2"></i>2B, City road, Pune</p>
+            <p class="mb-2"><i class="fas fa-phone mr-2"></i>7878787878</p>
+            <p><i class="fas fa-envelope mr-2"></i> xyzcarta@gmail.com</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Load products
+        loadProducts();
+        
+        // Update cart count
+        updateCartCount();
+        
+        // Setup category filter functionality
+        const categoryPills = document.querySelectorAll('.category-pill');
+        categoryPills.forEach(pill => {
+          pill.addEventListener('click', function() {
+            // Remove active class from all pills
+            categoryPills.forEach(p => p.classList.remove('active'));
+            // Add active class to clicked pill
+            this.classList.add('active');
+            // Filter products
+            filterProducts();
+          });
+        });
+        
+        // Setup search functionality
+        const searchInput = document.getElementById('search-input');
+        searchInput.addEventListener('input', filterProducts);
+      });
+      
+      function filterProducts() {
+        const searchTerm = document.getElementById('search-input').value.toLowerCase();
+        const activeCategoryElement = document.querySelector('.category-pill.active');
+        const activeCategory = activeCategoryElement ? activeCategoryElement.getAttribute('data-category') : 'all';
+        
+        const productElements = document.querySelectorAll('.product-card');
+        let visibleCount = 0;
+        
+        productElements.forEach(product => {
+          const productName = product.getAttribute('data-name').toLowerCase();
+          const productCategory = product.getAttribute('data-category');
+          
+          const matchesSearch = productName.includes(searchTerm);
+          const matchesCategory = activeCategory === 'all' || productCategory === activeCategory;
+          
+          if (matchesSearch && matchesCategory) {
+            product.classList.remove('hidden');
+            visibleCount++;
+          } else {
+            product.classList.add('hidden');
+          }
+        });
+        
+        // Show/hide empty state
+        const emptyState = document.getElementById('empty-state');
+        if (visibleCount === 0) {
+          emptyState.classList.remove('hidden');
+        } else {
+          emptyState.classList.add('hidden');
+        }
+      }
+      
+      function loadProducts() {
+        // Sample product data
+        const products = [
+          { 
+            id: 1, 
+            name: 'Fresh Apples', 
+            category: 'fruits', 
+            price: 80, 
+            image: 'https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80', 
+            description: 'Fresh and juicy red apples' 
+          },
+          { 
+            id: 2, 
+            name: 'Bananas', 
+            category: 'fruits', 
+            price: 40, 
+            image: 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80', 
+            description: 'Ripe and sweet bananas' 
+          },
+          { 
+            id: 3, 
+            name: 'Carrots', 
+            category: 'vegetables', 
+            price: 30, 
+            image: 'https://images.unsplash.com/photo-1447175008436-054170c2e979?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80', 
+            description: 'Fresh organic carrots' 
+          },
+          { 
+            id: 4, 
+            name: 'Milk', 
+            category: 'dairy', 
+            price: 50, 
+            image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1374&q=80', 
+            description: 'Fresh cow milk 1L' 
+          },
+          { 
+            id: 5, 
+            name: 'Bread', 
+            category: 'bakery', 
+            price: 35, 
+            image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1472&q=80', 
+            description: 'Fresh whole wheat bread' 
+          },
+          { 
+            id: 6, 
+            name: 'Eggs', 
+            category: 'dairy', 
+            price: 60, 
+            image: 'https://images.unsplash.com/photo-1587486913049-53fc88980cfc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1374&q=80', 
+            description: 'Farm fresh eggs (12 pieces)' 
+          },
+          { 
+            id: 7, 
+            name: 'Tomatoes', 
+            category: 'vegetables', 
+            price: 25, 
+            image: 'https://images.unsplash.com/photo-1592841200221-473f270aabc6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1374&q=80', 
+            description: 'Fresh red tomatoes' 
+          },
+          { 
+            id: 8, 
+            name: 'Potatoes', 
+            category: 'vegetables', 
+            price: 20, 
+            image: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80', 
+            description: 'Fresh potatoes 1kg' 
+          }
+        ];
+        
+        const productsContainer = document.getElementById('products-container');
+        
+        products.forEach(product => {
+          const productElement = document.createElement('div');
+          productElement.className = 'product-card bg-white rounded-xl shadow overflow-hidden';
+          productElement.setAttribute('data-name', product.name);
+          productElement.setAttribute('data-category', product.category);
+          productElement.setAttribute('data-price', product.price);
+          
+          productElement.innerHTML = `
+            <div class="h-52 overflow-hidden">
+              <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover hover:scale-110 transition-transform duration-300">
+            </div>
+            <div class="p-4">
+              <div class="flex justify-between items-start mb-2">
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-800">${product.name}</h3>
+                  <p class="text-gray-500 text-sm capitalize">${product.category}</p>
+                </div>
+                <span class="bg-purple-100 text-purple-800 text-xs font-semibold px-2.5 py-0.5 rounded">Rs. ${product.price}</span>
+              </div>
+              <p class="text-gray-600 text-sm mb-4">${product.description}</p>
+              <button onclick="addToCart(${product.id}, '${product.name.replace("'", "\\'")}', ${product.price}, '${product.image}', '${product.category}')" 
+                class="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white py-2 px-4 rounded font-medium hover:from-purple-700 hover:to-purple-800 transition duration-300 flex items-center justify-center">
+                <i class="fas fa-cart-plus mr-2"></i> Add to Cart
+              </button>
+            </div>
+          `;
+          
+          productsContainer.appendChild(productElement);
+        });
+      }
+      
+      function addToCart(id, name, price, image, category) {
+        // Get existing cart items from localStorage or initialize empty array
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        
+        // Check if item already exists in cart
+        const existingItemIndex = cart.findIndex(item => item.id === id);
+        
+        if (existingItemIndex > -1) {
+          // Item exists, increment quantity
+          cart[existingItemIndex].quantity += 1;
+        } else {
+          // Item doesn't exist, add new item
+          cart.push({
+            id: id,
+            name: name,
+            price: price,
+            image: image,
+            category: category,
+            quantity: 1
+          });
+        }
+        
+        // Save updated cart back to localStorage
+        localStorage.setItem('cart', JSON.stringify(cart));
+        
+        // Show toast notification
+        showToast('Item added to cart!');
+        
+        // Update cart count
+        updateCartCount();
+      }
+      
+      function showToast(message) {
+        const toast = document.getElementById('cart-toast');
+        toast.querySelector('span').textContent = message;
+        toast.classList.remove('translate-y-20', 'opacity-0');
+        
+        // Hide toast after 3 seconds
+        setTimeout(() => {
+          toast.classList.add('translate-y-20', 'opacity-0');
+        }, 3000);
+      }
+      
+      function updateCartCount() {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+        document.getElementById('cart-count').textContent = totalItems;
+      }
+      
+      // Make logout available globally
+      window.logout = logout;
+    </script>
+  </body>
+</html>

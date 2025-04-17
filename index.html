@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CART - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script type="module" src="firebaseauth.js"></script>
+    <style>
+        .auth-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .auth-card {
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .auth-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .input-field:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+        .google-btn {
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+        .google-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex justify-center items-center min-h-screen p-4">
+    <!-- Main Container -->
+    <div class="flex flex-col md:flex-row w-full max-w-6xl rounded-xl overflow-hidden shadow-2xl">
+        <!-- Left Side - Branding/Image -->
+        <div class="auth-gradient text-white p-8 md:w-1/2 flex flex-col justify-center items-center text-center">
+            <div class="flex items-center space-x-2 mb-6">
+                <div class="w-12 h-12 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center">
+                    <i class="fas fa-shopping-cart text-white text-xl"></i>
+                </div>
+                <span class="text-2xl font-bold">CART</span>
+            </div>
+            <h1 class="text-3xl font-bold mb-4">Welcome Back!</h1>
+            <p class="mb-8 max-w-md">Login to access your personalized shopping experience.</p>
+            <img src="https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80" 
+                 alt="Happy shopping" 
+                 class="rounded-lg w-full max-w-xs shadow-lg">
+        </div>
+        
+        <!-- Right Side - Auth Forms -->
+        <div class="bg-white p-8 md:w-1/2 flex flex-col justify-center">
+            <!-- Login Page -->
+            <div id="loginPage" class="auth-card">
+                <h2 class="text-3xl font-bold mb-2 text-gray-800">Login</h2>
+                <p class="text-gray-600 mb-8">Enter your credentials to access your account</p>
+                
+                <!-- Google Sign-In Button -->
+                <button onclick="loginWithGoogle()" class="google-btn w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 py-3 px-4 rounded-lg font-medium mb-6 hover:bg-gray-50">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google logo" class="w-5 h-5 mr-3">
+                    Continue with Google
+                </button>
+                
+                <div class="flex items-center mb-6">
+                    <div class="flex-grow border-t border-gray-300"></div>
+                    <span class="mx-4 text-gray-500">or</span>
+                    <div class="flex-grow border-t border-gray-300"></div>
+                </div>
+                
+                <form onsubmit="login(event)" class="space-y-6">
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Email</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-envelope text-gray-400"></i>
+                            </div>
+                            <input type="email" id="loginEmail" 
+                                   class="input-field w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none" 
+                                   placeholder="your@email.com" required>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Password</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-lock text-gray-400"></i>
+                            </div>
+                            <input type="password" id="loginPassword" 
+                                   class="input-field w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none" 
+                                   placeholder="••••••••" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:shadow-lg transition duration-300">
+                        Login <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                    
+                    <p class="mt-6 text-center text-gray-600">
+                        Don't have an account? 
+                        <a href="#" class="text-blue-500 font-medium hover:underline" onclick="showSignup()">Sign up</a>
+                    </p>
+                </form>
+            </div>
+            
+            <!-- Signup Page -->
+            <div id="signupPage" class="auth-card hidden">
+                <h2 class="text-3xl font-bold mb-2 text-gray-800">Create Account</h2>
+                
+                <!-- Google Sign-In Button -->
+                <button onclick="loginWithGoogle()" class="google-btn w-full flex items-center justify-center bg-white border border-gray-300 text-gray-700 py-3 px-4 rounded-lg font-medium mb-6 hover:bg-gray-50">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google logo" class="w-5 h-5 mr-3">
+                    Continue with Google
+                </button>
+                
+                <div class="flex items-center mb-6">
+                    <div class="flex-grow border-t border-gray-300"></div>
+                    <span class="mx-4 text-gray-500">or</span>
+                    <div class="flex-grow border-t border-gray-300"></div>
+                </div>
+                
+                <form onsubmit="signup(event)" class="space-y-6">
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Full Name</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-user text-gray-400"></i>
+                            </div>
+                            <input type="text" id="signupName" 
+                                   class="input-field w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none" 
+                                   placeholder="name" required>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Email</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-envelope text-gray-400"></i>
+                            </div>
+                            <input type="email" id="signupEmail" 
+                                   class="input-field w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none" 
+                                   placeholder="your@email.com" required>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Password</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-lock text-gray-400"></i>
+                            </div>
+                            <input type="password" id="signupPassword" 
+                                   class="input-field w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none" 
+                                   placeholder="••••••••" required>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">Minimum 8 characters with at least one number</p>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:shadow-lg transition duration-300">
+                        Sign Up <i class="fas fa-user-plus ml-2"></i>
+                    </button>
+                    
+                    <p class="mt-6 text-center text-gray-600">
+                        Already have an account? 
+                        <a href="#" class="text-blue-500 font-medium hover:underline" onclick="showLogin()">Login</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showSignup() {
+            document.getElementById("loginPage").classList.add("hidden");
+            document.getElementById("signupPage").classList.remove("hidden");
+        }
+
+        function showLogin() {
+            document.getElementById("signupPage").classList.add("hidden");
+            document.getElementById("loginPage").classList.remove("hidden");
+        }
+    </script>
+</body>
+</html>

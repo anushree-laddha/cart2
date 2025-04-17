@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CART - About Us</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script type="module" src="firebaseauth.js"></script>
+    <script type="module" src="app.js" defer></script>
+    <style>
+      .hero-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+      .nav-link {
+        position: relative;
+      }
+      .nav-link:after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -2px;
+        left: 0;
+        background-color: #ef4444;
+        transition: width 0.3s ease;
+      }
+      .nav-link:hover:after {
+        width: 100%;
+      }
+      .team-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+    </style>
+  </head>
+  <body class="font-sans antialiased">
+    <!-- Navbar -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+      <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+          <div class="w-10 h-10 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center">
+            <i class="fas fa-shopping-cart text-white"></i>
+          </div>
+          <span class="text-xl font-bold text-gray-800">CART</span>
+        </div>
+        
+        <nav class="hidden md:flex space-x-8">
+          <a href="home.html" class="nav-link text-gray-600 hover:text-gray-900 font-medium">Home</a>
+          <a href="items.html" class="nav-link text-gray-600 hover:text-gray-900 font-medium">Products</a>
+          <a href="cart.html" class="nav-link text-gray-600 hover:text-gray-900 font-medium">Cart</a>
+          <a href="aboutus.html" class="nav-link text-gray-600 hover:text-gray-900 font-medium">About</a>
+          <a href="contactus.html" class="nav-link text-gray-600 hover:text-gray-900 font-medium">Contact</a>
+        </nav>
+        
+        <div class="flex items-center space-x-4">
+          <a href="cart.html" class="relative">
+            <i class="fas fa-shopping-cart text-gray-600 text-xl"></i>
+            <span class="cart-count absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">0</span>
+          </a>
+          <span id="userGreeting" class="hidden md:block text-gray-600"></span>
+          <button onclick="logout()" class="bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-2 rounded-full font-medium hover:shadow-lg transition-all duration-300">
+            Logout <i class="fas fa-sign-out-alt ml-1"></i>
+          </button>
+        </div>
+        
+        <!-- Mobile menu button -->
+        <button class="md:hidden text-gray-600">
+          <i class="fas fa-bars text-xl"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- About Header -->
+    <section class="hero-gradient text-white py-12">
+      <div class="container mx-auto px-4 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6">About Us</h1>
+        <p class="text-xl max-w-2xl mx-auto">
+          Learn more about our mission to make grocery shopping simple and enjoyable
+        </p>
+      </div>
+    </section>
+
+    <!-- Our Story -->
+    <section class="py-16 bg-white">
+      <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row items-center gap-12">
+          <div class="md:w-1/2">
+            <img src="https://images.unsplash.com/photo-1556740738-b6a63e27c4df?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80" 
+                 alt="Our team" 
+                 class="rounded-xl shadow-lg w-full">
+          </div>
+          <div class="md:w-1/2">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Our Story</h2>
+            <p class="text-gray-600 mb-4">
+              Founded in 2023, CART began with a simple idea: to make grocery shopping as effortless as possible. 
+              We noticed how time-consuming and frustrating traditional grocery shopping could be, and we set out to change that.
+            </p>
+            <p class="text-gray-600 mb-4">
+              Our platform combines the convenience of online shopping with smart features that help you discover new products, 
+              remember your favorites, and checkout in seconds.
+            </p>
+            <p class="text-gray-600">
+              Today, we serve thousands of happy customers across Pune, with plans to expand nationwide. 
+              Our commitment to quality, convenience, and customer satisfaction remains at the heart of everything we do.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Our Values -->
+    <section class="py-16 bg-gray-50">
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-bold text-gray-800 mb-4">Our Values</h2>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="bg-white p-8 rounded-xl shadow-md">
+            <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mb-6">
+              <i class="fas fa-heart text-red-500 text-xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-3 text-gray-800">Customer First</h3>
+          </div>
+          
+          <div class="bg-white p-8 rounded-xl shadow-md">
+            <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mb-6">
+              <i class="fas fa-lightbulb text-blue-500 text-xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-3 text-gray-800">Innovation</h3>
+          </div>
+          
+          <div class="bg-white p-8 rounded-xl shadow-md">
+            <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mb-6">
+              <i class="fas fa-hand-holding-heart text-green-500 text-xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-3 text-gray-800">Integrity</h3>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+      <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-6">Ready to Experience Better Shopping?</h2>
+        <p class="text-xl mb-8 max-w-2xl mx-auto">
+          Join thousands of happy customers who shop smarter with CART.
+        </p>
+        <a href="items.html" class="inline-block bg-white text-purple-700 hover:bg-gray-100 font-semibold px-8 py-3 rounded-full text-center transition duration-300 shadow-lg">
+          Start Shopping <i class="fas fa-arrow-right ml-2"></i>
+        </a>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-12">
+      <div class="container mx-auto px-4">
+        <div class="grid md:grid-cols-4 gap-8">
+          <div>
+            <div class="flex items-center space-x-2 mb-4">
+              <div class="w-10 h-10 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center">
+                <i class="fas fa-shopping-cart text-white"></i>
+              </div>
+              <span class="text-xl font-bold text-white">CART</span>
+            </div>
+            <p class="mb-4">
+              Making online shopping simpler, faster, and more enjoyable.
+            </p>
+            <div class="flex space-x-4">
+              <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
+              <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+              <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+          </div>
+          
+          <div>
+            <h3 class="text-white font-semibold text-lg mb-4">Quick Links</h3>
+            <ul class="space-y-2">
+              <li><a href="home.html" class="hover:text-white transition">Home</a></li>
+              <li><a href="items.html" class="hover:text-white transition">Products</a></li>
+              <li><a href="cart.html" class="hover:text-white transition">Your Cart</a></li>
+              <li><a href="aboutus.html" class="hover:text-white transition">About Us</a></li>
+              <li><a href="contactus.html" class="hover:text-white transition">Contact</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 class="text-white font-semibold text-lg mb-4">Help & Info</h3>
+            <ul class="space-y-2">
+              <li><a href="#" class="hover:text-white transition">FAQs</a></li>
+              <li><a href="#" class="hover:text-white transition">Shipping Info</a></li>
+              <li><a href="#" class="hover:text-white transition">Returns Policy</a></li>
+              <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 class="text-white font-semibold text-lg mb-4">Contact Us</h3>
+            <p class="mb-2"><i class="fas fa-map-marker-alt mr-2"></i>2B, City road, Pune</p>
+            <p class="mb-2"><i class="fas fa-phone mr-2"></i>7878787878</p>
+            <p><i class="fas fa-envelope mr-2"></i> xyzcarta@gmail.com</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
